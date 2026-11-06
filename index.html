@@ -45,7 +45,7 @@
         background: #fff !important;
         color: #000 !important;
       }
-      .no-print, header, footer, .MuiDialogActions-root, .action-buttons {
+      .no-print, header, footer, .MuiDialogActions-root, .action-buttons, .component-badge {
         display: none !important;
       }
       .MuiDialog-paper {
@@ -80,7 +80,7 @@
       Select, MenuItem, InputLabel, Button,
       Alert, Dialog, DialogTitle, DialogContent, DialogActions,
       Chip, Typography, Box, Divider, Card, CardContent,
-      ThemeProvider, createTheme, CssBaseline, FormHelperText
+      ThemeProvider, createTheme, CssBaseline, FormHelperText, Collapse
     } = window.MaterialUI || MaterialUI;
 
     // Custom Medical Theme
@@ -156,6 +156,9 @@
       // Errors State
       const [errors, setErrors] = React.useState({});
       const [alertError, setAlertError] = React.useState('');
+
+      // Show/Hide Component Info Banner
+      const [showComponentGuide, setShowComponentGuide] = React.useState(true);
 
       // Dialog Result State
       const [openDialog, setOpenDialog] = React.useState(false);
@@ -408,7 +411,7 @@
               background: 'linear-gradient(90deg, #0284c7 0%, #0d9488 100%)',
               color: '#ffffff',
               borderRadius: 0,
-              mb: 4
+              mb: 3
             }}
             className="no-print"
           >
@@ -426,7 +429,7 @@
                 >
                   <span className="material-icons" style={{ fontSize: '36px' }}>local_hospital</span>
                 </Box>
-                <Box>
+                <Box sx={{ flexGrow: 1 }}>
                   <Typography variant="h5" component="h1" sx={{ fontWeight: 700, letterSpacing: '0.5px' }}>
                     ระบบลงทะเบียนและประเมินความเสี่ยงสุขภาพเบื้องต้น
                   </Typography>
@@ -434,50 +437,131 @@
                     Patient Health Risk Assessment and Registration System (งานที่ 1)
                   </Typography>
                 </Box>
+                <Chip
+                  icon={<span className="material-icons" style={{ color: '#fff', fontSize: '16px' }}>code</span>}
+                  label="MUI Components Specification"
+                  sx={{
+                    bgcolor: 'rgba(255,255,255,0.2)',
+                    color: '#fff',
+                    fontWeight: 600,
+                    display: { xs: 'none', sm: 'inline-flex' }
+                  }}
+                />
               </Stack>
             </Container>
           </Paper>
 
           {/* Main Content Form */}
           <Container maxWidth="md" sx={{ pb: 6 }} className="no-print">
+
+            {/* Interactive Component Specification Banner */}
+            <Paper
+              variant="outlined"
+              sx={{
+                p: 2,
+                mb: 3,
+                bgcolor: '#f8fafc',
+                borderColor: '#cbd5e1',
+                borderRadius: 2.5,
+              }}
+              className="component-badge"
+            >
+              <Stack direction="row" justifyContent="space-between" alignItems="center">
+                <Stack direction="row" spacing={1} alignItems="center">
+                  <span className="material-icons" style={{ color: '#0284c7', fontSize: '22px' }}>layers</span>
+                  <Typography variant="subtitle2" sx={{ fontWeight: 700, color: '#0f172a' }}>
+                    🏷️ ป้ายกำกับประเภท MUI Component ประจำแต่ละช่องป้อนข้อมูล
+                  </Typography>
+                </Stack>
+                <Button
+                  size="small"
+                  onClick={() => setShowComponentGuide(!showComponentGuide)}
+                  sx={{ color: '#0284c7', fontSize: '0.8rem', p: 0.5 }}
+                >
+                  {showComponentGuide ? 'ซ่อนคำอธิบาย' : 'แสดงคำอธิบาย'}
+                </Button>
+              </Stack>
+
+              <Collapse in={showComponentGuide}>
+                <Box sx={{ mt: 1.5, pt: 1.5, borderTop: '1px dashed #e2e8f0' }}>
+                  <Typography variant="caption" sx={{ color: '#475569', display: 'block', mb: 1 }}>
+                    ระบบได้แสดงป้ายระบุประเภทของ MUI Component ไว้อย่างชัดเจนในทุกช่องข้อมูลตามข้อกำหนดที่ 3 ของโจทย์:
+                  </Typography>
+                  <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+                    <Chip label="TextField (รับค่าตัวอักษร)" size="small" color="primary" variant="outlined" sx={{ fontWeight: 600 }} />
+                    <Chip label="TextField (รับค่าตัวเลข)" size="small" color="primary" variant="outlined" sx={{ fontWeight: 600 }} />
+                    <Chip label="RadioGroup / Radio (ปุ่มตัวเลือกเดี่ยว)" size="small" color="secondary" variant="outlined" sx={{ fontWeight: 600 }} />
+                    <Chip label="Select / MenuItem (รายการดรอปดาวน์)" size="small" color="secondary" variant="outlined" sx={{ fontWeight: 600 }} />
+                    <Chip label="Button (ปุ่มกดปฏิบัติการ)" size="small" color="info" variant="outlined" sx={{ fontWeight: 600 }} />
+                    <Chip label="Alert (กล่องแจ้งเตือนความผิดพลาด)" size="small" color="error" variant="outlined" sx={{ fontWeight: 600 }} />
+                    <Chip label="Dialog (หน้าต่างสรุปผล)" size="small" color="success" variant="outlined" sx={{ fontWeight: 600 }} />
+                    <Chip label="Chip (แสดงสถานะระดับความเสี่ยง)" size="small" color="warning" variant="outlined" sx={{ fontWeight: 600 }} />
+                  </Stack>
+                </Box>
+              </Collapse>
+            </Paper>
+
             <Paper elevation={4} sx={{ p: { xs: 2.5, sm: 4, md: 5 }, bgcolor: '#ffffff', border: '1px solid #e2e8f0' }}>
 
               {/* Alert Warning for Validation Errors */}
               {alertError && (
-                <Alert
-                  severity="error"
-                  variant="filled"
-                  sx={{ mb: 3.5, borderRadius: 2 }}
-                  onClose={() => setAlertError('')}
-                >
-                  <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                    {alertError}
-                  </Typography>
-                </Alert>
+                <Box sx={{ mb: 3.5 }}>
+                  <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 0.8 }}>
+                    <Typography variant="caption" sx={{ fontWeight: 700, color: '#dc2626' }}>
+                      [MUI Component: Alert (แจ้งเตือนความผิดพลาดตามข้อกำหนด)]
+                    </Typography>
+                    <Chip label="Alert" size="small" color="error" sx={{ height: 20, fontSize: '0.68rem', fontWeight: 700 }} />
+                  </Stack>
+                  <Alert
+                    severity="error"
+                    variant="filled"
+                    sx={{ borderRadius: 2 }}
+                    onClose={() => setAlertError('')}
+                  >
+                    <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                      {alertError}
+                    </Typography>
+                  </Alert>
+                </Box>
               )}
 
               {/* SECTION 1: Personal Information */}
               <Box sx={{ mb: 4 }}>
-                <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 2 }}>
-                  <span className="material-icons" style={{ color: '#0284c7' }}>badge</span>
-                  <Typography variant="h6" sx={{ fontWeight: 600, color: '#0f172a' }}>
-                    1. ข้อมูลส่วนบุคคลของผู้ป่วย (Personal Information)
-                  </Typography>
+                <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 2 }}>
+                  <Stack direction="row" alignItems="center" spacing={1}>
+                    <span className="material-icons" style={{ color: '#0284c7' }}>badge</span>
+                    <Typography variant="h6" sx={{ fontWeight: 600, color: '#0f172a' }}>
+                      1. ข้อมูลส่วนบุคคลของผู้ป่วย (Personal Information)
+                    </Typography>
+                  </Stack>
+                  <Chip label="Structure: Grid & Stack" size="small" variant="outlined" sx={{ fontSize: '0.7rem', color: '#64748b' }} />
                 </Stack>
                 <Divider sx={{ mb: 2.5 }} />
 
                 <Grid container spacing={2.5}>
+                  {/* Field: Full Name */}
                   <Grid item xs={12} sm={8}>
+                    <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 0.8 }}>
+                      <Typography variant="body2" sx={{ fontWeight: 600, color: '#334155' }}>
+                        ชื่อ-นามสกุล *
+                      </Typography>
+                      <Chip
+                        label="TextField (รับค่าตัวอักษร)"
+                        size="small"
+                        color="primary"
+                        variant="outlined"
+                        sx={{ height: 22, fontSize: '0.72rem', fontWeight: 600, bgcolor: '#f0f9ff' }}
+                      />
+                    </Stack>
                     <TextField
                       fullWidth
                       id="fullName"
                       name="fullName"
-                      label="ชื่อ-นามสกุล *"
-                      placeholder="เช่น นายสมชาย ใจดี"
+                      placeholder="เช่น นายสมชาย ใจดี (ข้อมูลประเภทตัวอักษร Text String)"
                       value={formData.fullName}
                       onChange={handleChange}
                       error={Boolean(errors.fullName)}
-                      helperText={errors.fullName}
+                      helperText={errors.fullName || 'ข้อมูลประเภท: ตัวอักษร (String) ห้ามเว้นว่าง'}
                       InputProps={{
                         startAdornment: (
                           <span className="material-icons" style={{ color: '#94a3b8', marginRight: '8px' }}>person</span>
@@ -486,18 +570,30 @@
                     />
                   </Grid>
 
+                  {/* Field: Age */}
                   <Grid item xs={12} sm={4}>
+                    <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 0.8 }}>
+                      <Typography variant="body2" sx={{ fontWeight: 600, color: '#334155' }}>
+                        อายุ (ปี) *
+                      </Typography>
+                      <Chip
+                        label="TextField (รับค่าตัวเลข)"
+                        size="small"
+                        color="primary"
+                        variant="outlined"
+                        sx={{ height: 22, fontSize: '0.72rem', fontWeight: 600, bgcolor: '#f0f9ff' }}
+                      />
+                    </Stack>
                     <TextField
                       fullWidth
                       id="age"
                       name="age"
-                      label="อายุ (ปี) *"
                       type="number"
                       placeholder="เช่น 35"
                       value={formData.age}
                       onChange={handleChange}
                       error={Boolean(errors.age)}
-                      helperText={errors.age}
+                      helperText={errors.age || 'ข้อมูลประเภท: ตัวเลขจำนวนเต็ม (Integer 1-120)'}
                       inputProps={{ min: 1, max: 120 }}
                       InputProps={{
                         startAdornment: (
@@ -507,11 +603,21 @@
                     />
                   </Grid>
 
+                  {/* Field: Gender */}
                   <Grid item xs={12}>
-                    <FormControl component="fieldset">
-                      <FormLabel component="legend" sx={{ fontSize: '0.9rem', fontWeight: 500, color: '#475569' }}>
+                    <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 0.8 }}>
+                      <Typography variant="body2" sx={{ fontWeight: 600, color: '#334155' }}>
                         เพศ (Gender)
-                      </FormLabel>
+                      </Typography>
+                      <Chip
+                        label="RadioGroup / Radio (เลือกตัวเลือกเดี่ยว)"
+                        size="small"
+                        color="secondary"
+                        variant="outlined"
+                        sx={{ height: 22, fontSize: '0.72rem', fontWeight: 600, bgcolor: '#f0fdfa' }}
+                      />
+                    </Stack>
+                    <FormControl component="fieldset">
                       <RadioGroup
                         row
                         name="gender"
@@ -529,27 +635,42 @@
 
               {/* SECTION 2: Body Measurements (BMI) */}
               <Box sx={{ mb: 4 }}>
-                <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 2 }}>
-                  <span className="material-icons" style={{ color: '#0284c7' }}>straighten</span>
-                  <Typography variant="h6" sx={{ fontWeight: 600, color: '#0f172a' }}>
-                    2. ข้อมูลสัดส่วนร่างกาย (Body Measurements)
-                  </Typography>
+                <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 2 }}>
+                  <Stack direction="row" alignItems="center" spacing={1}>
+                    <span className="material-icons" style={{ color: '#0284c7' }}>straighten</span>
+                    <Typography variant="h6" sx={{ fontWeight: 600, color: '#0f172a' }}>
+                      2. ข้อมูลสัดส่วนร่างกาย (Body Measurements)
+                    </Typography>
+                  </Stack>
+                  <Chip label="สูตร: BMI = น้ำหนัก / (ส่วนสูง/100)²" size="small" variant="outlined" sx={{ fontSize: '0.7rem', color: '#0284c7' }} />
                 </Stack>
                 <Divider sx={{ mb: 2.5 }} />
 
                 <Grid container spacing={2.5}>
+                  {/* Field: Weight */}
                   <Grid item xs={12} sm={6}>
+                    <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 0.8 }}>
+                      <Typography variant="body2" sx={{ fontWeight: 600, color: '#334155' }}>
+                        น้ำหนัก (กก.) *
+                      </Typography>
+                      <Chip
+                        label="TextField (รับค่าตัวเลข / ทศนิยม)"
+                        size="small"
+                        color="primary"
+                        variant="outlined"
+                        sx={{ height: 22, fontSize: '0.72rem', fontWeight: 600, bgcolor: '#f0f9ff' }}
+                      />
+                    </Stack>
                     <TextField
                       fullWidth
                       id="weight"
                       name="weight"
-                      label="น้ำหนัก (กก.) *"
                       type="number"
                       placeholder="เช่น 68.5"
                       value={formData.weight}
                       onChange={handleChange}
                       error={Boolean(errors.weight)}
-                      helperText={errors.weight || 'หน่วย: กิโลกรัม (kg)'}
+                      helperText={errors.weight || 'ข้อมูลประเภท: ตัวเลขทศนิยม (Decimal kg)'}
                       inputProps={{ step: '0.1', min: 10, max: 300 }}
                       InputProps={{
                         startAdornment: (
@@ -559,18 +680,30 @@
                     />
                   </Grid>
 
+                  {/* Field: Height */}
                   <Grid item xs={12} sm={6}>
+                    <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 0.8 }}>
+                      <Typography variant="body2" sx={{ fontWeight: 600, color: '#334155' }}>
+                        ส่วนสูง (ซม.) *
+                      </Typography>
+                      <Chip
+                        label="TextField (รับค่าตัวเลข / ทศนิยม)"
+                        size="small"
+                        color="primary"
+                        variant="outlined"
+                        sx={{ height: 22, fontSize: '0.72rem', fontWeight: 600, bgcolor: '#f0f9ff' }}
+                      />
+                    </Stack>
                     <TextField
                       fullWidth
                       id="height"
                       name="height"
-                      label="ส่วนสูง (ซม.) *"
                       type="number"
-                      placeholder="เช่น 172"
+                      placeholder="เช่น 172.0"
                       value={formData.height}
                       onChange={handleChange}
                       error={Boolean(errors.height)}
-                      helperText={errors.height || 'หน่วย: เซนติเมตร (cm)'}
+                      helperText={errors.height || 'ข้อมูลประเภท: ตัวเลขทศนิยม (Decimal cm)'}
                       inputProps={{ step: '0.5', min: 50, max: 250 }}
                       InputProps={{
                         startAdornment: (
@@ -605,17 +738,26 @@
 
               {/* SECTION 3: Risk Behaviors */}
               <Box sx={{ mb: 4 }}>
-                <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 2 }}>
-                  <span className="material-icons" style={{ color: '#0284c7' }}>smoking_rooms</span>
-                  <Typography variant="h6" sx={{ fontWeight: 600, color: '#0f172a' }}>
-                    3. พฤติกรรมความเสี่ยง (Risk Behaviors)
-                  </Typography>
+                <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 2 }}>
+                  <Stack direction="row" alignItems="center" spacing={1}>
+                    <span className="material-icons" style={{ color: '#0284c7' }}>smoking_rooms</span>
+                    <Typography variant="h6" sx={{ fontWeight: 600, color: '#0f172a' }}>
+                      3. พฤติกรรมความเสี่ยง (Risk Behaviors)
+                    </Typography>
+                  </Stack>
+                  <Chip
+                    label="RadioGroup / Radio (เลือกพฤติกรรมความเสี่ยง)"
+                    size="small"
+                    color="secondary"
+                    variant="outlined"
+                    sx={{ height: 22, fontSize: '0.72rem', fontWeight: 600, bgcolor: '#f0fdfa' }}
+                  />
                 </Stack>
                 <Divider sx={{ mb: 2.5 }} />
 
                 <FormControl component="fieldset" fullWidth sx={{ mb: 2 }}>
                   <FormLabel component="legend" sx={{ fontSize: '0.95rem', fontWeight: 600, color: '#334155', mb: 1 }}>
-                    พฤติกรรมการสูบบุหรี่ (Smoking Habit) *
+                    พฤติกรรมการสูบบุหรี่ (Smoking Habit) * — <em>[ ข้อมูลประเภท: ตัวเลือกเดี่ยว Single Choice ]</em>
                   </FormLabel>
                   <RadioGroup
                     name="smoking"
@@ -655,7 +797,7 @@
                         label={
                           <Box>
                             <Typography variant="body2" sx={{ fontWeight: 600, color: '#b91c1c' }}>สูบเป็นประจำทุกวัน (Regular / Heavy smoker)</Typography>
-                            <Typography variant="caption" sx={{ color: '#64748b' }}>สูบต่อเนื่องเป็นประจำทุกวัน</Typography>
+                            <Typography variant="caption" sx={{ color: '#64748b' }}>สูบต่อเนื่องเป็นประจำทุกวัน (ปัจจัยเสี่ยงสูง)</Typography>
                           </Box>
                         }
                       />
@@ -666,11 +808,20 @@
 
               {/* SECTION 4: Medical History */}
               <Box sx={{ mb: 4 }}>
-                <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 2 }}>
-                  <span className="material-icons" style={{ color: '#0284c7' }}>medical_information</span>
-                  <Typography variant="h6" sx={{ fontWeight: 600, color: '#0f172a' }}>
-                    4. ประวัติโรคประจำตัว (Medical History)
-                  </Typography>
+                <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 2 }}>
+                  <Stack direction="row" alignItems="center" spacing={1}>
+                    <span className="material-icons" style={{ color: '#0284c7' }}>medical_information</span>
+                    <Typography variant="h6" sx={{ fontWeight: 600, color: '#0f172a' }}>
+                      4. ประวัติโรคประจำตัว (Medical History)
+                    </Typography>
+                  </Stack>
+                  <Chip
+                    label="Select / MenuItem (เลือกกลุ่มโรคประจำตัว)"
+                    size="small"
+                    color="secondary"
+                    variant="outlined"
+                    sx={{ height: 22, fontSize: '0.72rem', fontWeight: 600, bgcolor: '#f0fdfa' }}
+                  />
                 </Stack>
                 <Divider sx={{ mb: 2.5 }} />
 
@@ -695,57 +846,60 @@
                     <MenuItem value="multiple">🔴 มีหลายโรคเรื้อรังร่วมกัน (Multiple Conditions)</MenuItem>
                   </Select>
                   <FormHelperText>
-                    เลือกกลุ่มโรคประจำตัวที่ได้รับการวินิจฉัยจากแพทย์
+                    ข้อมูลประเภท: รายการดรอปดาวน์เลือกโรคเรื้อรังที่ได้รับการวินิจฉัยจากแพทย์
                   </FormHelperText>
                 </FormControl>
               </Box>
 
               {/* ACTION BUTTONS (Stack, Button) */}
-              <Stack
-                direction={{ xs: 'column', sm: 'row' }}
-                spacing={2}
-                justifyContent="center"
-                alignItems="center"
-                sx={{ mt: 5 }}
-                className="action-buttons"
-              >
-                <Button
-                  variant="contained"
-                  color="primary"
-                  size="large"
-                  onClick={handleAssess}
-                  startIcon={<span className="material-icons">health_and_safety</span>}
-                  sx={{
-                    minWidth: '220px',
-                    py: 1.5,
-                    fontSize: '1.05rem',
-                    boxShadow: '0 4px 14px 0 rgba(2, 132, 199, 0.39)',
-                  }}
+              <Box sx={{ mt: 5, textAlign: 'center' }} className="action-buttons">
+                <Typography variant="caption" sx={{ color: '#64748b', fontWeight: 600, display: 'block', mb: 1 }}>
+                  [MUI Component: Button (ปุ่มประเมินผลและปุ่มล้างข้อมูลตามข้อกำหนด)]
+                </Typography>
+                <Stack
+                  direction={{ xs: 'column', sm: 'row' }}
+                  spacing={2}
+                  justifyContent="center"
+                  alignItems="center"
                 >
-                  ประเมินผลความเสี่ยง
-                </Button>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    size="large"
+                    onClick={handleAssess}
+                    startIcon={<span className="material-icons">health_and_safety</span>}
+                    sx={{
+                      minWidth: '220px',
+                      py: 1.5,
+                      fontSize: '1.05rem',
+                      boxShadow: '0 4px 14px 0 rgba(2, 132, 199, 0.39)',
+                    }}
+                  >
+                    ประเมินผลความเสี่ยง
+                  </Button>
 
-                <Button
-                  variant="outlined"
-                  color="inherit"
-                  size="large"
-                  onClick={handleReset}
-                  startIcon={<span className="material-icons">refresh</span>}
-                  sx={{
-                    minWidth: '160px',
-                    py: 1.5,
-                    fontSize: '1rem',
-                    color: '#64748b',
-                    borderColor: '#cbd5e1',
-                    '&:hover': {
-                      borderColor: '#94a3b8',
-                      backgroundColor: '#f1f5f9',
-                    }
-                  }}
-                >
-                  ล้างข้อมูล
-                </Button>
-              </Stack>
+                  <Button
+                    variant="outlined"
+                    color="inherit"
+                    size="large"
+                    onClick={handleReset}
+                    startIcon={<span className="material-icons">refresh</span>}
+                    sx={{
+                      minWidth: '160px',
+                      py: 1.5,
+                      fontSize: '1rem',
+                      color: '#64748b',
+                      borderColor: '#cbd5e1',
+                      '&:hover': {
+                        borderColor: '#94a3b8',
+                        backgroundColor: '#f1f5f9',
+                      }
+                    }}
+                  >
+                    ล้างข้อมูล
+                  </Button>
+                </Stack>
+              </Box>
 
             </Paper>
           </Container>
@@ -770,7 +924,7 @@
                         ใบสรุปผลการประเมินความเสี่ยงสุขภาพเบื้องต้น
                       </Typography>
                       <Typography variant="caption" sx={{ opacity: 0.85 }}>
-                        Patient Screening & Health Risk Summary Report
+                        Patient Screening & Health Risk Summary Report [MUI: Dialog & DialogTitle]
                       </Typography>
                     </Box>
                   </Stack>
@@ -866,8 +1020,11 @@
                         borderRadius: 2.5,
                       }}
                     >
-                      <Typography variant="body2" sx={{ color: '#64748b', fontWeight: 600, mb: 1 }}>
+                      <Typography variant="body2" sx={{ color: '#64748b', fontWeight: 600, mb: 0.5 }}>
                         ระดับความเสี่ยงสุขภาพเบื้องต้น
+                      </Typography>
+                      <Typography variant="caption" sx={{ color: '#94a3b8', mb: 1 }}>
+                        [MUI Component: Chip]
                       </Typography>
                       <Chip
                         label={assessmentResult.riskLabel}
@@ -963,7 +1120,7 @@
                   color="primary"
                   sx={{ borderRadius: 2, px: 3 }}
                 >
-                  ปิดหน้าต่าง
+                  ปิดหน้าต่าง [DialogActions]
                 </Button>
               </DialogActions>
             </Dialog>
